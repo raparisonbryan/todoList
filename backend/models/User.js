@@ -1,13 +1,9 @@
-/**
- * * Imports
- */
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
 /**
  * Modèle de données de l'utilisateur
  */
-
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -29,6 +25,10 @@ const userSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
 });
 

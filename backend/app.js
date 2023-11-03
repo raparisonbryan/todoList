@@ -6,6 +6,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const userRoutes = require("./routes/user");
+const noteRoutes = require("./routes/note");
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use(express.json());
  * * Routes
  */
 app.use("/user", userRoutes);
+app.use("/note", noteRoutes);
 
 /**
  * * Exports

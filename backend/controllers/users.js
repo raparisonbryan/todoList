@@ -1,6 +1,3 @@
-/**
- * imports
- */
 const User = require("../models/User");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -25,6 +22,7 @@ exports.signup = (req, res, next) => {
         phone: req.body.phone,
         email: req.body.email,
         password: hash,
+        isAdmin: false,
       });
       user
         .save()
@@ -74,9 +72,11 @@ exports.login = (req, res, next) => {
             name: user.name,
             email: user.email,
             userId: user._id,
+            isAdmin: user.isAdmin,
             token: jwt.sign(
               {
                 userId: user._id,
+                isAdmin: user.isAdmin,
               },
               process.env.RANDOM_TOKEN_SECRET,
               {
@@ -183,3 +183,56 @@ exports.getAllUsers = (req, res, next) => {
       })
     );
 };
+
+/**
+ * * Créer un admin
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.createAdmin = (req, res, next) => {
+  if (req.auth.isAdmin) {
+    bcrypt
+      .hash(req.body.password, 10)
+      .then((hash) => {
+        const user = new User({
+          name: req.body.name,
+          imageUrl: req.body.imageUrl,
+          phone: req.body.phone,
+          email: req.body.email,
+          password: hash,
+          isAdmin: true,
+        });
+        user
+          .save()
+          .then(() =>
+            res.status(201).json({
+              message: "Administrateur créé !",
+            })
+          )
+          .catch((error) =>
+            res.status(400).json({
+              error,
+            })
+          );
+      })
+      .catch((error) =>
+        res.status(500).json({
+          error,
+        })
+      );
+  } else {
+    res.status(403).send("Accès refusé");
+  }
+};
+
+/**
+ * * Déconnexion d'un utilisateur
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+router.post("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({ message: "Déconnexion réussie" });
+});
