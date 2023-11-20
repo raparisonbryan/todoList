@@ -230,9 +230,8 @@ exports.createAdmin = (req, res, next) => {
  * * Déconnexion d'un utilisateur
  * @param {*} req
  * @param {*} res
- * @param {*} next
  */
-router.post("/logout", (req, res) => {
+exports.logout = (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Déconnexion réussie" });
-});
+};
